@@ -9,22 +9,24 @@ Este reporte presenta los resultados preliminares de la evaluación de diferente
 
 - Comparar el rendimiento de diferentes arquitecturas de CNN modernas
 - Identificar el modelo con mejor balance entre precisión y eficiencia
-- Evaluar la convergencia de los modelos con entrenamiento limitado (3 épocas)
+- Evaluar la convergencia de los modelos con entrenamiento extendido (30 épocas intentadas)
+- Implementar entrenamiento con técnicas avanzadas de optimización
 
 ### 📊 Resultados Obtenidos
 
 #### Tabla Comparativa de Rendimiento
 
-| Modelo | Top-1 Accuracy (Val) | Top-1 Accuracy (Test) | Top-5 Accuracy (Val) | Estado | Observaciones |
-|--------|---------------------|----------------------|---------------------|---------|---------------|
-| **EfficientNet-B1** | **70.70%** | **70.70%** | **92.40%** | ✅ Exitoso | Mejor rendimiento general |
-| **EfficientNet-B2** | **68.00%** | **68.00%** | **90.50%** | ✅ Exitoso | Segundo mejor |
-| **DenseNet-121** | **61.70%** | **61.70%** | **86.80%** | ✅ Exitoso | Buen rendimiento |
-| **EfficientNet-B0** | **51.60%** | **51.60%** | **83.50%** | ✅ Exitoso | Modelo más liviano |
-| **ResNet-34 Plus** | 1.30% | 16.60% | 5.40% | ✅ Convergencia lenta | Necesita más épocas |
-| **ResNet-18 Plus** | 0.70% | 12.00% | 4.50% | ✅ Convergencia lenta | Necesita más épocas |
-| **ResNet-18 Base** | 0.00% | 0.00% | 0.00% | ❌ Error | Error dimensional |
-| **ResNet-34 Base** | - | - | - | 📝 No ejecutado | - |
+| Modelo | Épocas | Top-1 Accuracy (Val) | Top-5 Accuracy (Val) | Estado | Observaciones |
+|--------|---------|---------------------|---------------------|---------|---------------|
+| **EfficientNet-B1** | 3 | **70.70%** | **92.40%** | ✅ Exitoso | Mejor rendimiento general (entrenamiento inicial) |
+| **EfficientNet-B2** | 3 | **68.00%** | **90.50%** | ✅ Exitoso | Segundo mejor (entrenamiento inicial) |
+| **DenseNet-121** | 3 | **61.70%** | **86.80%** | ✅ Exitoso | Buen rendimiento (entrenamiento inicial) |
+| **EfficientNet-B0** | 3 | **51.60%** | **83.50%** | ✅ Exitoso | Modelo más liviano |
+| **EfficientNet-B1** | 30 | - | - | ❌ Falla técnica | Error en función de pérdida durante validación |
+| **EfficientNet-B2** | 30 | - | - | ❌ Falla técnica | Error en función de pérdida durante validación |
+| **DenseNet-121** | 30 | - | - | ❌ Falla técnica | Error en función de pérdida durante validación |
+| **ResNet-34 Plus** | 3 | 1.30% | 5.40% | ✅ Convergencia lenta | Necesita más épocas |
+| **ResNet-18 Plus** | 3 | 0.70% | 4.50% | ✅ Convergencia lenta | Necesita más épocas |
 
 #### Configuraciones de Entrenamiento
 
@@ -36,6 +38,35 @@ Este reporte presenta los resultados preliminares de la evaluación de diferente
 | DenseNet-121 | 24 | 224×224 | 5 steps | No |
 | ResNet-18 Plus | 32 | 224×224 | 4 steps | Sí |
 | ResNet-34 Plus | 24 | 224×224 | 5 steps | Sí |
+
+### 🔧 Definiciones de Modelos
+
+#### EfficientNet-B1
+- **Arquitectura**: EfficientNet-B1 con escalado compuesto de profundidad, anchura y resolución
+- **Parámetros**: ~7.8M parámetros
+- **Entrada**: 240×240 píxeles
+- **Características**: 
+  - Arquitectura basada en Neural Architecture Search (NAS)
+  - Uso de bloques MBConv con Squeeze-and-Excitation
+  - Escalado eficiente de todos los componentes de la red
+
+#### EfficientNet-B2
+- **Arquitectura**: EfficientNet-B2 con mayor resolución y capacidad que B1
+- **Parámetros**: ~9.2M parámetros
+- **Entrada**: 260×260 píxeles
+- **Características**:
+  - Mayor profundidad y anchura que EfficientNet-B1
+  - Mejor capacidad de representación a costa de más recursos computacionales
+  - Activaciones Swish para mejor gradiente
+
+#### DenseNet-121
+- **Arquitectura**: DenseNet con 121 capas y conexiones densas
+- **Parámetros**: ~8.0M parámetros
+- **Entrada**: 224×224 píxeles
+- **Características**:
+  - Conexiones densas entre todas las capas
+  - Reutilización eficiente de características
+  - Reducción del problema de gradiente desvaneciente
 
 ### 📈 Análisis de Resultados
 
@@ -67,6 +98,19 @@ Este reporte presenta los resultados preliminares de la evaluación de diferente
    - **ResNet-18 Base** falló por error dimensional
    - Requieren mayor número de épocas para convergencia adecuada
 
+#### 🔧 Desafíos Técnicos Encontrados
+
+1. **Entrenamiento Extendido (30 épocas)**
+   - **Problema**: Error en la función de pérdida durante la fase de validación
+   - **Error específico**: Incompatibilidad entre `SoftTargetCrossEntropy` (usado para Mixup) y targets regulares en validación
+   - **Síntoma**: Falla después del primer epoch durante `validate()` en `loss = criterion(outputs, targets)`
+   - **Impacto**: Imposibilitó completar el entrenamiento extendido para los tres modelos principales
+
+2. **Configuración de Mixup/Augmentation**
+   - El script usa `SoftTargetCrossEntropy` cuando Mixup está habilitado
+   - En validación se esperan targets regulares (enteros) pero la función de pérdida espera distribuciones suaves
+   - Requiere separación de criterios de pérdida para entrenamiento y validación
+
 ### 🔍 Observaciones Técnicas
 
 #### Convergencia y Aprendizaje
@@ -89,9 +133,10 @@ Este reporte presenta los resultados preliminares de la evaluación de diferente
 - **Dataset**: 100 clases de aeronaves
 - **Entrenamiento**: 8,000 imágenes
 - **Validación**: 1,000 imágenes  
-- **Épocas**: 3 (entrenamiento preliminar)
+- **Épocas**: 3 (entrenamiento preliminar exitoso), 30 (intentado, fallas técnicas)
 - **Hardware**: Apple Silicon GPU (MPS)
-- **Optimización**: Gradient accumulation para batch sizes efectivos más grandes
+- **Optimización**: Gradient accumulation, Mixup, CutMix, EMA (para modelos Plus)
+- **Técnicas Avanzadas**: SAM optimizer, Cosine Annealing LR, AutoAugment
 
 ### 🎯 Conclusiones y Recomendaciones
 
@@ -104,24 +149,30 @@ Este reporte presenta los resultados preliminares de la evaluación de diferente
 
 #### Recomendaciones para Trabajo Futuro
 
-1. **Entrenamiento Extendido**
-   - Incrementar a 10-15 épocas para convergencia completa
+1. **Resolución de Problemas Técnicos**
+   - **Prioridad Alta**: Corregir incompatibilidad de función de pérdida en validación
+   - Implementar criterios de pérdida separados para entrenamiento (SoftTargetCrossEntropy) y validación (CrossEntropyLoss)
+   - Verificar manejo correcto de targets en modo validación
+
+2. **Entrenamiento Extendido Exitoso**
+   - Una vez corregidos los errores técnicos, completar entrenamiento de 30 épocas
    - Implementar early stopping basado en validación
+   - Monitorear curvas de aprendizaje para detectar overfitting
 
-2. **Optimizaciones para ResNet**
+3. **Optimizaciones para ResNet**
    - Revisar implementación de ResNet-18 Base
-   - Ajustar learning rate para familia ResNet
-   - Considerar warm-up learning rate schedule
+   - Ajustar learning rate específicamente para familia ResNet
+   - Considerar warm-up learning rate schedule más largo
 
-3. **Mejoras Generales**
-   - Implementar data augmentation más agresivo
-   - Explorar técnicas de regularización (dropout, weight decay)
-   - Evaluar ensemble de mejores modelos
+4. **Mejoras en Pipeline de Entrenamiento**
+   - Implementar manejo robusto de errores durante entrenamiento
+   - Agregar checkpoints automáticos para recovery
+   - Mejorar logging y monitoreo de métricas
 
-4. **Validación Adicional**
-   - Implementar validación cruzada
-   - Evaluar en dataset de test independiente
-   - Análisis de matriz de confusión por clases
+5. **Análisis Extendido**
+   - Generar curvas de entrenamiento para todos los modelos exitosos
+   - Implementar análisis de matriz de confusión detallada
+   - Evaluar en dataset de test independiente una vez completado el entrenamiento
 
 ### 📊 Métricas de Eficiencia
 
@@ -139,8 +190,8 @@ Este reporte presenta los resultados preliminares de la evaluación de diferente
 **Grupo 3**  
 **Proyecto**: Clasificación de Aeronaves con Deep Learning  
 **Fecha**: Agosto 2025  
-**Estado**: Resultados Preliminares - 3 Épocas
+**Estado**: Resultados Preliminares - 3 Épocas + Análisis Técnico de Fallas en 30 Épocas
 
 ---
 
-*Este reporte presenta resultados preliminares basados en entrenamiento de 3 épocas. Se recomienda entrenamiento extendido para resultados definitivos.*
+*Este reporte presenta resultados exitosos de entrenamiento preliminar (3 épocas) y análisis detallado de las fallas técnicas encontradas durante los intentos de entrenamiento extendido (30 épocas). Los mejores modelos (EfficientNet-B1, B2, DenseNet-121) demostraron excelente rendimiento inicial que justifica la resolución de los problemas técnicos para entrenamiento completo.*
