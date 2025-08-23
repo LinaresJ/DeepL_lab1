@@ -1,0 +1,21 @@
+# Core scientific stack
+numpy
+pandas
+matplotlib
+seaborn
+scikit-learn
+pillow
+
+# Deep learning
+torch
+torchvision
+
+# Jupyter kernel support for VS Code/Notebooks
+ipykernel
+certifi
+truststore
+
+# Utilities
+tqdm
+timm
+rich
