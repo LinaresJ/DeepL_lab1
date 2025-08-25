@@ -1,0 +1,9 @@
+Modelo,Familia,Precisión Top-1 (%),Precisión Top-5 (%),Mejor Precisión (%),Tiempo Total (s),Fecha_Experimento,GPU_Utilizada,Epocas_Entrenamiento,Dataset_Total_Imagenes,Num_Clases
+EfficientNet-B2,EfficientNet,87.1,96.3,87.5,4308.9,2025-08-25 09:05:20,Apple Silicon (MPS),3,10000,100
+EfficientNet-B1,EfficientNet,85.3,95.5,85.7,3203.3,2025-08-25 09:05:20,Apple Silicon (MPS),3,10000,100
+DenseNet-169,DenseNet,84.8,96.5,84.8,3888.9,2025-08-25 09:05:20,Apple Silicon (MPS),3,10000,100
+DenseNet-121,DenseNet,83.2,95.3,83.2,10556.4,2025-08-25 09:05:20,Apple Silicon (MPS),3,10000,100
+EfficientNet-B0,EfficientNet,81.7,95.4,82.9,2224.5,2025-08-25 09:05:20,Apple Silicon (MPS),3,10000,100
+ResNet-50,ResNet,70.4,93.1,70.4,1273.1,2025-08-25 09:05:20,Apple Silicon (MPS),3,10000,100
+ResNet-18,ResNet,62.2,88.3,62.2,714.1,2025-08-25 09:05:20,Apple Silicon (MPS),3,10000,100
+ResNet-34,ResNet,60.6,89.5,60.6,870.3,2025-08-25 09:05:20,Apple Silicon (MPS),3,10000,100

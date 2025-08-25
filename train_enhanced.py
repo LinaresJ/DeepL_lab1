@@ -910,6 +910,9 @@ def main():
         else:
             criterion = nn.CrossEntropyLoss()
     
+    # Always use CrossEntropyLoss for validation (no soft targets)
+    val_criterion = nn.CrossEntropyLoss()
+    
     # EMA
     ema_model = None
     if args.ema:
@@ -975,7 +978,7 @@ def main():
         # Validate
         val_model = ema_model.module if ema_model else model
         val_loss, val_top1, val_top5 = validate(
-            val_model, val_loader, criterion, device, True,
+            val_model, val_loader, val_criterion, device, True,
             epoch, not args.no_progress
         )
         

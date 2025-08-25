@@ -1,0 +1,2 @@
+Modelo,Familia,Precisión Top-1 (%),Precisión Top-5 (%),Mejor Precisión (%),Tiempo Total (s),Fecha_Experimento,GPU_Utilizada,Epocas_Entrenamiento,Dataset_Total_Imagenes,Num_Clases
+ResNet-18,ResNet,62.2,88.3,62.2,714.1,2025-08-25 01:44:15,Apple Silicon (MPS),3,10000,100

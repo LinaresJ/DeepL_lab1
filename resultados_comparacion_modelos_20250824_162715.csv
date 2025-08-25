@@ -1,0 +1,9 @@
+Modelo,Familia,Precisión Top-1 (%),Precisión Top-5 (%),Mejor Precisión (%),Tiempo Total (s),Eficiencia,Fecha_Experimento,GPU_Utilizada,Epocas_Entrenamiento,Dataset_Total_Imagenes,Num_Clases
+ResNet-18,ResNet,79.9,100.0,79.9,306.4,15.646214099216712,2025-08-24 16:27:15,Apple Silicon (MPS),3,10000,3
+ResNet-34,ResNet,79.9,100.0,79.9,420.4,11.403425309229307,2025-08-24 16:27:15,Apple Silicon (MPS),3,10000,3
+ResNet-50,ResNet,79.9,100.0,79.9,669.7,7.158429147379424,2025-08-24 16:27:15,Apple Silicon (MPS),3,10000,3
+DenseNet-121,DenseNet,79.9,100.0,79.9,665.4,7.204688908926962,2025-08-24 16:27:15,Apple Silicon (MPS),3,10000,3
+DenseNet-169,DenseNet,79.9,100.0,79.9,805.9,5.948628862141705,2025-08-24 16:27:15,Apple Silicon (MPS),3,10000,3
+EfficientNet-B1,EfficientNet,79.8,100.0,79.9,660.2,7.252347773401999,2025-08-24 16:27:15,Apple Silicon (MPS),3,10000,3
+EfficientNet-B0,EfficientNet,78.0,100.0,79.3,457.0,10.24070021881838,2025-08-24 16:27:15,Apple Silicon (MPS),3,10000,3
+EfficientNet-B2,EfficientNet,75.6,100.0,79.9,878.7,5.162171389552747,2025-08-24 16:27:15,Apple Silicon (MPS),3,10000,3
